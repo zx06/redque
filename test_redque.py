@@ -55,34 +55,22 @@ class TestRedisQueue(unittest.TestCase):
             item = queue_put.get()
             self.assertEqual(item, i)
 
-    def test_put_when_locked(self):
-        """锁定时插入"""
-        queue_put_locked = RedisQueue("queue_put_locked_" + self.key_rand)
-        self.keys.append(queue_put_locked.key)
-        # 加锁 验证锁状态
-        queue_put_locked.lock(10)
-        self.assertTrue(queue_put_locked.locked())
-        # 验证加锁时插入失败
-        with self.assertRaises(LockError):
-            queue_put_locked.put("lock")
-        # 解锁 验证锁状态
-        queue_put_locked.unlock()
-        self.assertFalse(queue_put_locked.locked())
-        # 解锁后 验证插入
-        self.assertEqual(queue_put_locked.put("unlock"), 1)
-
-    def test_lock_timeout(self):
-        """验证锁的超时机制"""
-        queue_lock_timeout = RedisQueue("queue_lock_timeout_" + self.key_rand)
-        self.keys.append(queue_lock_timeout.key)
-        self.keys.append(queue_lock_timeout.key + "_lock")
-        # 加锁 验证插入失败
-        queue_lock_timeout.lock(6)
-        with self.assertRaises(LockError):
-            queue_lock_timeout.put("lock")
-        # 等待超时 验证插入成功
+    def test_lock(self):
+        """测试加锁"""
+        queue_lock = RedisQueue("queue_lock_" + self.key_rand)
+        self.keys.append(queue_lock.key)
+        # 加锁 无锁时加锁
+        self.assertTrue(queue_lock.lock(5))
+        # 加锁 有锁时加锁
+        self.assertFalse(queue_lock.lock())
+        # 加锁 超时后加锁
         time.sleep(6)
-        self.assertEqual(queue_lock_timeout.put("unlock"), 1)
+        self.assertTrue(queue_lock.lock())
+        # 加锁 解锁后加锁
+        queue_lock.unlock()
+        self.assertTrue(queue_lock.lock())
+
+
 
     def test_get_nowait_when_empty(self):
         """测试异常"""
