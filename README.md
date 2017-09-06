@@ -1,4 +1,6 @@
 # redque
+![travis-ci](https://api.travis-ci.org/noob-xu/redque.svg?branch=master)
+
 基于redis的分布式队列
 - 基础使用
 ```python
@@ -8,7 +10,7 @@ q.put(1)
 q.get()
 ```
 
-- 锁(多进程或者分布式场景)     
+- 锁(多进程或者分布式场景)
 *不是真正意义上的锁，只是提供一个标记*
 ```python
 import redque
