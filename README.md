@@ -1,5 +1,5 @@
 # redque
-![travis-ci](https://api.travis-ci.org/noob-xu/redque.svg?branch=master)
+[![Build Status](https://travis-ci.org/noob-xu/redque.svg?branch=master)](https://travis-ci.org/noob-xu/redque)
 
 基于redis的分布式队列
 - 基础使用
